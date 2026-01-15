@@ -1,0 +1,14 @@
+{
+    "menuItemComposeSource": {
+        "message": "Utwórz opis dla wiktionary",
+        "description": "Creating wiktionary description"
+    },
+    "notificationTitle": {
+        "message": "Sukces",
+        "description": ""
+    },
+    "notificationMessage": {
+        "message": "Kopiowanie powiodło się",
+        "description": ""
+    }
+}

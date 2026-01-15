@@ -1,0 +1,28 @@
+{
+    "manifest_version": 2,
+    "name": "wikiFox",
+    "version": "1.0",
+    "description": "",
+    "permissions": [
+        "menus",
+        "contextMenus",
+        "notifications",
+        "activeTab"
+    ],
+    "default_locale": "pl",
+    "content_scripts": [
+        {
+            "matches": ["https://pl.wikisource.org/wiki/*"],
+            "js": [
+                "content/content_script.js",
+                "content/types.js"
+            ],
+            "run_at": "document_end"
+        }
+    ],
+    "background": {
+        "scripts": [
+            "background/script.js"
+        ]
+    }
+}

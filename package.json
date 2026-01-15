@@ -1,0 +1,25 @@
+{
+  "name": "wikifox",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && node scripts/cleanup.mjs",
+    "build:watch": "tsc --watch",
+    "dev": "web-ext run",
+    "package": "web-ext build",
+    "postbuild": "cp manifest.json dist && cp -R _locales dist",
+    "clean": "rm -rf dist/*"
+  },
+  "devDependencies": {
+    "@types/firefox-webext-browser": "^143.0.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "ts-loader": "^9.0.0",
+    "typescript": "^5.9.3",
+    "web-ext": "^9.2.0",
+    "webpack": "^5.0.0",
+    "webpack-cli": "^5.0.0"
+  }
+}
