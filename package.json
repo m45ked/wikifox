@@ -6,12 +6,15 @@
   "author": "",
   "type": "module",
   "scripts": {
-    "build": "tsc && node scripts/cleanup.mjs",
     "build:watch": "tsc --watch",
-    "dev": "web-ext run",
     "package": "web-ext build",
     "postbuild": "cp manifest.json dist && cp -R _locales dist",
-    "clean": "rm -rf dist/*"
+    "clean": "rm -rf dist/*",
+    "build:extension": "tsc --project tsconfig.json",
+    "build:scripts": "tsc --project scripts/tsconfig.json",
+    "cleanup": "node scripts/cleanup.cjs",
+    "build": "npm run build:extension && npm run cleanup",
+    "dev": "npm run build && web-ext run --source-dir=dist"
   },
   "devDependencies": {
     "@types/firefox-webext-browser": "^143.0.0",
