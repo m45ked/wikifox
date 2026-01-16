@@ -16,8 +16,6 @@ function _formatSource(context: ContextType): string {
 }
 
 function _copyToClipboard(text: string): boolean {
-    console.log("Funkcja copyToClipboard wywołana z tekstem długości:", text.length);
-    
     try {
         const textarea = document.createElement('textarea');
         textarea.value = text;
@@ -25,10 +23,10 @@ function _copyToClipboard(text: string): boolean {
         textarea.style.left = '-9999px';
         document.body.appendChild(textarea);
         textarea.select();
-        
+
         const success = document.execCommand('copy');
         document.body.removeChild(textarea);
-        
+
         console.log("Wynik execCommand('copy'):", success);
         return success;
     } catch (error) {
@@ -48,11 +46,9 @@ async function _composeSource(_info: browser.menus.OnClickData, _tabId: number) 
         });
 
         const fmtResponse: string = _formatSource(response);
-        console.log(`Got response: ${response} and formateted as: ${fmtResponse}`);
         const copyResult = _copyToClipboard(fmtResponse);
 
-        if (copyResult)
-        {
+        if (copyResult) {
             browser.notifications.create({
                 type: "basic",
                 title: browser.i18n.getMessage("notificationTitle"),
@@ -67,15 +63,87 @@ async function _composeSource(_info: browser.menus.OnClickData, _tabId: number) 
     }
 }
 
-browser.menus.create({
-    id: "compose-source",
-    title: browser.i18n.getMessage("menuItemComposeSource"),
-    contexts: ["page"]
-}, onCreated);
-
 browser.menus.onClicked.addListener(async function (_info, _tab) {
     if (_info.menuItemId !== 'compose-source' || !_tab?.id)
         return;
 
     _composeSource(_info, _tab.id);
 })
+
+interface Action {
+    id: string;
+    title: string;
+    callback: (info: browser.menus.OnClickData, tabId: number) => void;
+};
+
+interface HostData {
+    host: string;
+    actions: Action[];
+}
+
+const extensionMenuItems: HostData[] = [
+    {
+        host: "wikisource",
+        actions: [
+            {
+                id: "compose-source",
+                title: browser.i18n.getMessage("menuItemComposeSource"),
+                callback: _composeSource
+            }
+        ]
+    }
+];
+
+const activeMenus = new Map<number, string[]>();
+
+interface ChangeInfo {
+    url: string;
+};
+
+browser.tabs.onUpdated.addListener(async (_tabId, _changeInfo) => {
+    if (_changeInfo.status === 'complete') {
+        const tab = await browser.tabs.get(_tabId);
+        if (!tab.url)
+            return;
+        _updateMenuForTab(_tabId, { url: tab.url });
+    }
+});
+browser.tabs.onActivated.addListener(async (_info) => {
+    const tab = await browser.tabs.get(_info.tabId);
+    if (!tab.url)
+        return;
+    _updateMenuForTab(_info.tabId, { url: tab.url });
+});
+
+
+async function _updateMenuForTab(_tabId: number, _changeInfo: ChangeInfo): Promise<void> {
+    if (!_changeInfo.url)
+        return;
+
+    const url = _changeInfo.url;
+    const oldItems = activeMenus.get(_tabId) || [];
+
+    for (const id of oldItems) {
+        try {
+            await browser.menus.remove(id);
+        } catch (e) { }
+    }
+
+    const newItemIds: string[] = [];
+    for (const item of extensionMenuItems) {
+        if (url.includes(item.host)) {
+            for (const action of item.actions) {
+                const fullId = `tab-${_tabId}-${action.id}`;
+                browser.menus.create({
+                    id: fullId,
+                    title: action.title,
+                    contexts: ["page"],
+                    onclick: (_info, _tab) => action.callback(_info, _tabId)
+                }, onCreated);
+                newItemIds.push(fullId);
+            }
+        }
+    }
+
+    activeMenus.set(_tabId, newItemIds);
+}

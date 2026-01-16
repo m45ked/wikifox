@@ -7,14 +7,15 @@
         "menus",
         "contextMenus",
         "notifications",
-        "activeTab"
+        "activeTab",
+        "tabs"
     ],
     "default_locale": "pl",
     "content_scripts": [
         {
             "matches": ["https://pl.wikisource.org/wiki/*"],
             "js": [
-                "content/content_script.js"
+                "content/wikisource.js"
             ],
             "run_at": "document_end"
         }
