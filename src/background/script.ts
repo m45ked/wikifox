@@ -94,7 +94,7 @@ const extensionMenuItems: HostData[] = [
     }
 ];
 
-let activeMenus: string[] = [];
+const activeMenus: string[] = [];
 
 interface ChangeInfo {
     url: string | undefined;
@@ -124,6 +124,8 @@ async function _updateMenuForTab(_tabId: number, _changeInfo: ChangeInfo): Promi
             await browser.menus.remove(id);
         } catch (e) { }
     }
+
+    activeMenus.length = 0;
 
     if (!url)
         return;
