@@ -94,10 +94,10 @@ const extensionMenuItems: HostData[] = [
     }
 ];
 
-const activeMenus = new Map<number, string[]>();
+let activeMenus: string[] = [];
 
 interface ChangeInfo {
-    url: string;
+    url: string | undefined;
 };
 
 browser.tabs.onUpdated.addListener(async (_tabId, _changeInfo) => {
@@ -110,26 +110,24 @@ browser.tabs.onUpdated.addListener(async (_tabId, _changeInfo) => {
 });
 browser.tabs.onActivated.addListener(async (_info) => {
     const tab = await browser.tabs.get(_info.tabId);
-    if (!tab.url)
-        return;
     _updateMenuForTab(_info.tabId, { url: tab.url });
 });
 
 
 async function _updateMenuForTab(_tabId: number, _changeInfo: ChangeInfo): Promise<void> {
-    if (!_changeInfo.url)
-        return;
-
     const url = _changeInfo.url;
-    const oldItems = activeMenus.get(_tabId) || [];
+    const oldItems = activeMenus || [];
 
     for (const id of oldItems) {
         try {
+            console.log(`Deleting menu with id=${id}`);
             await browser.menus.remove(id);
         } catch (e) { }
     }
 
-    const newItemIds: string[] = [];
+    if (!url)
+        return;
+
     for (const item of extensionMenuItems) {
         if (url.includes(item.host)) {
             for (const action of item.actions) {
@@ -140,10 +138,8 @@ async function _updateMenuForTab(_tabId: number, _changeInfo: ChangeInfo): Promi
                     contexts: ["page"],
                     onclick: (_info, _tab) => action.callback(_info, _tabId)
                 }, onCreated);
-                newItemIds.push(fullId);
+                activeMenus.push(fullId);
             }
         }
     }
-
-    activeMenus.set(_tabId, newItemIds);
 }
