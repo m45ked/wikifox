@@ -11,6 +11,12 @@ Rozszerzenie dodaje opcję w menu kontekstowym na stronach `https://pl.wikisourc
 "Utwórz opis dla wiktionary".
 Formatuje on *Dane tekstu* do formatu [Szablon:źródło](https://pl.wiktionary.org/wiki/Szablon:%C5%BAr%C3%B3d%C5%82o).
 
+Wyszukiwanie bezwglęne
+---
+
+Na stronach `https://pl.wiktionary.org/wiki/*`, po zaznaczeniu tekstu, możliwe
+jest wywołanie wyszukiwania bezpośrednio w Google wg dokładnej frazy (z "").
+
 Budowa i instalacja
 ===
 

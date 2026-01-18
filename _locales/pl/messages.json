@@ -10,5 +10,9 @@
     "notificationMessage": {
         "message": "Kopiowanie powiodło się",
         "description": ""
+    },
+    "menuItemSearchExactly": {
+        "message": "Szukaj dokładnie w Google",
+        "description": ""
     }
 }

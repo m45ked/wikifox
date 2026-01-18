@@ -35,6 +35,22 @@ function _copyToClipboard(text: string): boolean {
     }
 }
 
+async function _searchExactly(_info: browser.menus.OnClickData, _tabId: number) {
+    try {
+        const queryText = _info.selectionText || "";
+        if (queryText) {
+            const encodedQuery = encodeURIComponent(`"${queryText}"`);
+            const searchUrl = `https://www.google.com/search?q=${encodedQuery}`;
+            browser.tabs.create({
+                url: searchUrl
+            });
+        }
+    } catch (error) {
+        console.log(`Error: ${error}`);
+        throw error;
+    }
+}
+
 async function _composeSource(_info: browser.menus.OnClickData, _tabId: number) {
     try {
         const response: ContextType = await browser.tabs.sendMessage(_tabId, {
@@ -74,6 +90,7 @@ interface Action {
     id: string;
     title: string;
     callback: (info: browser.menus.OnClickData, tabId: number) => void;
+    contexts: browser.menus.ContextType[];
 };
 
 interface HostData {
@@ -88,7 +105,19 @@ const extensionMenuItems: HostData[] = [
             {
                 id: "compose-source",
                 title: browser.i18n.getMessage("menuItemComposeSource"),
-                callback: _composeSource
+                callback: _composeSource,
+                contexts: ["page"]
+            }
+        ]
+    },
+    {
+        host: "wiktionary",
+        actions: [
+            {
+                id: "search-exactly",
+                title: browser.i18n.getMessage("menuItemSearchExactly"),
+                callback: _searchExactly,
+                contexts: ["selection"]
             }
         ]
     }
@@ -137,7 +166,7 @@ async function _updateMenuForTab(_tabId: number, _changeInfo: ChangeInfo): Promi
                 browser.menus.create({
                     id: fullId,
                     title: action.title,
-                    contexts: ["page"],
+                    contexts: action.contexts,
                     onclick: (_info, _tab) => action.callback(_info, _tabId)
                 }, onCreated);
                 activeMenus.push(fullId);
