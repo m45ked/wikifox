@@ -88,6 +88,7 @@ async function _composeSource(_info: browser.menus.OnClickData, _tabId: number) 
             const copyResult = _copyToClipboard(fmtResponse);
 
             if (copyResult) {
+                
                 browser.notifications.create({
                     type: "basic",
                     title: browser.i18n.getMessage("notificationTitle"),
@@ -172,16 +173,7 @@ browser.tabs.onActivated.addListener(async (_info) => {
 
 async function _updateMenuForTab(_tabId: number, _changeInfo: ChangeInfo): Promise<void> {
     const url = _changeInfo.url;
-    const oldItems = activeMenus || [];
-
-    for (const id of oldItems) {
-        try {
-            console.debug(`Deleting menu with id=${id}`);
-            await browser.menus.remove(id);
-        } catch (e) { }
-    }
-
-    activeMenus.length = 0;
+    await _clearCustomMenuItems();
 
     if (!url)
         return;
@@ -200,4 +192,17 @@ async function _updateMenuForTab(_tabId: number, _changeInfo: ChangeInfo): Promi
             }
         }
     }
+}
+
+async function _clearCustomMenuItems() {
+    const oldItems = activeMenus || [];
+
+    for (const id of oldItems) {
+        try {
+            console.debug(`Deleting menu with id=${id}`);
+            await browser.menus.remove(id);
+        } catch (e) { }
+    }
+
+    activeMenus.length = 0;
 }
