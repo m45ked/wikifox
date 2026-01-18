@@ -15,40 +15,54 @@ function _formatSource(context: ContextType): string {
         + `wydawnictwo=${context.publisher}}}</ref>`;
 }
 
-function _copyToClipboard(text: string): boolean {
+interface Callable {
+    call: () => void;
+};
+
+function _safeCall(callable: Callable): boolean {
     try {
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        textarea.style.position = 'fixed';
-        textarea.style.left = '-9999px';
-        document.body.appendChild(textarea);
-        textarea.select();
-
-        const success = document.execCommand('copy');
-        document.body.removeChild(textarea);
-
-        console.log("Wynik execCommand('copy'):", success);
-        return success;
+        callable.call();
     } catch (error) {
-        console.error("Błąd w copyToClipboard:", error);
+        console.log("Error: ", error);
         return false;
     }
+
+    return true;
+}
+
+function _copyToClipboard(text: string): boolean {
+    return _safeCall({
+        call: () => {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+
+            const success = document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            if (!success)
+                throw new Error("Error while copying content");
+
+        }
+    });
 }
 
 function openNewTab(query: string | undefined, host: string) {
-    const queryStr = query || "";
-    try {
-        if (queryStr) {
-            const encodedQuery = encodeURIComponent(`"${queryStr}"`);
-            const searchUrl = `https://www.${host}.com/search?q=${encodedQuery}`;
-            browser.tabs.create({
-                url: searchUrl
-            });
+    _safeCall({
+        call: () => {
+            const queryStr = query || "";
+            if (queryStr) {
+                const encodedQuery = encodeURIComponent(`"${queryStr}"`);
+                const searchUrl = `https://www.${host}.com/search?q=${encodedQuery}`;
+                browser.tabs.create({
+                    url: searchUrl
+                });
+            }
         }
-    } catch (error) {
-        console.log(`Error: ${error}`);
-        throw error;
-    }
+    });
 }
 
 async function _searchExactlyDdg(_info: browser.menus.OnClickData, _tabId: number) {
@@ -61,31 +75,30 @@ async function _searchExactlyGoogle(_info: browser.menus.OnClickData, _tabId: nu
 }
 
 async function _composeSource(_info: browser.menus.OnClickData, _tabId: number) {
-    try {
-        const response: ContextType = await browser.tabs.sendMessage(_tabId, {
-            action: "getSourceData",
-            options: {
-                includeHtml: true,
-                includeImages: false
-            }
-        });
-
-        const fmtResponse: string = _formatSource(response);
-        const copyResult = _copyToClipboard(fmtResponse);
-
-        if (copyResult) {
-            browser.notifications.create({
-                type: "basic",
-                title: browser.i18n.getMessage("notificationTitle"),
-                message: browser.i18n.getMessage("notificationMessage")
+    _safeCall({
+        call: async () => {
+            const response: ContextType = await browser.tabs.sendMessage(_tabId, {
+                action: "getSourceData",
+                options: {
+                    includeHtml: true,
+                    includeImages: false
+                }
             });
-        } else {
-            console.log(`Error during copy`);
+
+            const fmtResponse: string = _formatSource(response);
+            const copyResult = _copyToClipboard(fmtResponse);
+
+            if (copyResult) {
+                browser.notifications.create({
+                    type: "basic",
+                    title: browser.i18n.getMessage("notificationTitle"),
+                    message: browser.i18n.getMessage("notificationMessage")
+                });
+            } else {
+                console.log(`Error during copy`);
+            }
         }
-    } catch (error) {
-        console.log(`Error: ${error}`);
-        throw error;
-    }
+    });
 }
 
 browser.menus.onClicked.addListener(async function (_info, _tab) {
