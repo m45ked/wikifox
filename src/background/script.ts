@@ -3,9 +3,9 @@ import { ContextType } from "../content/types";
 function onCreated() {
     const error = browser.runtime.lastError;
     if (error) {
-        console.log(`Error: ${error}`);
+        console.debug(`Error: ${error}`);
     } else {
-        console.log("Item created successfully")
+        console.debug("Item created successfully")
     }
 }
 
@@ -23,7 +23,7 @@ function _safeCall(callable: Callable): boolean {
     try {
         callable.call();
     } catch (error) {
-        console.log("Error: ", error);
+        console.debug("Error: ", error);
         return false;
     }
 
@@ -95,7 +95,7 @@ async function _composeSource(_info: browser.menus.OnClickData, _tabId: number) 
                     message: browser.i18n.getMessage("notificationMessage")
                 });
             } else {
-                console.log(`Error during copy`);
+                console.debug(`Error during copy`);
             }
         }
     });
@@ -177,7 +177,7 @@ async function _updateMenuForTab(_tabId: number, _changeInfo: ChangeInfo): Promi
 
     for (const id of oldItems) {
         try {
-            console.log(`Deleting menu with id=${id}`);
+            console.debug(`Deleting menu with id=${id}`);
             await browser.menus.remove(id);
         } catch (e) { }
     }
