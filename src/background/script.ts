@@ -45,33 +45,32 @@ function _copyToClipboard(text: string): boolean {
 
             if (!success)
                 throw new Error("Error while copying content");
-
         }
     });
 }
 
-function openNewTab(query: string | undefined, host: string) {
+function openNewTab(query: string, host: string) {
     _safeCall({
         call: () => {
-            const queryStr = query || "";
-            if (queryStr) {
-                const encodedQuery = encodeURIComponent(`"${queryStr}"`);
-                const searchUrl = `https://www.${host}.com/search?q=${encodedQuery}`;
-                browser.tabs.create({
-                    url: searchUrl
-                });
-            }
+            if (!query)
+                return;
+
+            const encodedQuery = encodeURIComponent(`"${query}"`);
+            const searchUrl = `https://www.${host}.com/search?q=${encodedQuery}`;
+            browser.tabs.create({
+                url: searchUrl
+            });
         }
     });
 }
 
 async function _searchExactlyDdg(_info: browser.menus.OnClickData, _tabId: number) {
-    openNewTab(_info.selectionText, "duckduckgo");
+    openNewTab(_info.selectionText || "", "duckduckgo");
 }
 
 
 async function _searchExactlyGoogle(_info: browser.menus.OnClickData, _tabId: number) {
-    openNewTab(_info.selectionText, "google");
+    openNewTab(_info.selectionText || "", "google");
 }
 
 async function _composeSource(_info: browser.menus.OnClickData, _tabId: number) {
@@ -85,7 +84,7 @@ async function _composeSource(_info: browser.menus.OnClickData, _tabId: number) 
                 }
             });
 
-            const fmtResponse: string = _formatSource(response);
+            const fmtResponse = _formatSource(response);
             const copyResult = _copyToClipboard(fmtResponse);
 
             if (copyResult) {
