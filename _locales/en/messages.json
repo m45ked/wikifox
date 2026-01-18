@@ -3,14 +3,6 @@
         "message": "Create wiktionary-source ref",
         "description": "Creating wiktionary description"
     },
-    "notificationTitle": {
-        "message": "Success",
-        "description": ""
-    },
-    "notificationMessage": {
-        "message": "Copying successfull",
-        "description": ""
-    },
     "menuItemSearchExactly": {
         "message": "Search exactly @ $HOST$",
         "description": "",

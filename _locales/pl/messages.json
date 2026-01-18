@@ -3,14 +3,6 @@
         "message": "Utwórz opis dla wiktionary",
         "description": "Creating wiktionary description"
     },
-    "notificationTitle": {
-        "message": "Sukces",
-        "description": ""
-    },
-    "notificationMessage": {
-        "message": "Kopiowanie powiodło się",
-        "description": ""
-    },
     "menuItemSearchExactly": {
         "message": "Szukaj dokładnie w $HOST$",
         "description": "",

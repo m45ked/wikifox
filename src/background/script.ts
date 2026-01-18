@@ -1,6 +1,6 @@
 import { ContextType } from "../content/types";
 
-function getTranslation(itemId: string, substitutions? :any): string {
+function getTranslation(itemId: string, substitutions?: any): string {
     return browser.i18n.getMessage(itemId, substitutions);
 }
 
@@ -93,16 +93,8 @@ async function _composeSource(_info: browser.menus.OnClickData, _tabId: number) 
             const fmtResponse = _formatSource(response);
             const copyResult = _copyToClipboard(fmtResponse);
 
-            if (copyResult) {
-
-                browser.notifications.create({
-                    type: "basic",
-                    title: browser.i18n.getMessage("notificationTitle"),
-                    message: browser.i18n.getMessage("notificationMessage")
-                });
-            } else {
+            if (!copyResult)
                 console.debug(`Error during copy`);
-            }
         }
     });
 }
