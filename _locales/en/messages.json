@@ -10,5 +10,13 @@
     "notificationMessage": {
         "message": "Copying successfull",
         "description": ""
+    },
+    "menuItemSearchExactlyGoogle": {
+        "message": "Search exactly @ Google",
+        "description": ""
+    },
+    "menuItemSearchExactlyDdg": {
+        "message": "Search exactly @ duckduckgo",
+        "description": ""
     }
 }

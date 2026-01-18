@@ -35,12 +35,12 @@ function _copyToClipboard(text: string): boolean {
     }
 }
 
-async function _searchExactly(_info: browser.menus.OnClickData, _tabId: number) {
+function openNewTab(query: string | undefined, host: string) {
+    const queryStr = query || "";
     try {
-        const queryText = _info.selectionText || "";
-        if (queryText) {
-            const encodedQuery = encodeURIComponent(`"${queryText}"`);
-            const searchUrl = `https://www.google.com/search?q=${encodedQuery}`;
+        if (queryStr) {
+            const encodedQuery = encodeURIComponent(`"${queryStr}"`);
+            const searchUrl = `https://www.${host}.com/search?q=${encodedQuery}`;
             browser.tabs.create({
                 url: searchUrl
             });
@@ -49,6 +49,15 @@ async function _searchExactly(_info: browser.menus.OnClickData, _tabId: number) 
         console.log(`Error: ${error}`);
         throw error;
     }
+}
+
+async function _searchExactlyDdg(_info: browser.menus.OnClickData, _tabId: number) {
+    openNewTab(_info.selectionText, "duckduckgo");
+}
+
+
+async function _searchExactlyGoogle(_info: browser.menus.OnClickData, _tabId: number) {
+    openNewTab(_info.selectionText, "google");
 }
 
 async function _composeSource(_info: browser.menus.OnClickData, _tabId: number) {
@@ -114,9 +123,15 @@ const extensionMenuItems: HostData[] = [
         host: "wiktionary",
         actions: [
             {
-                id: "search-exactly",
-                title: browser.i18n.getMessage("menuItemSearchExactly"),
-                callback: _searchExactly,
+                id: "search-exactly-Google",
+                title: browser.i18n.getMessage("menuItemSearchExactlyGoogle"),
+                callback: _searchExactlyGoogle,
+                contexts: ["selection"]
+            },
+            {
+                id: "search-exactly-Ddg",
+                title: browser.i18n.getMessage("menuItemSearchExactlyDdg"),
+                callback: _searchExactlyDdg,
                 contexts: ["selection"]
             }
         ]

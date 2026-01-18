@@ -11,8 +11,12 @@
         "message": "Kopiowanie powiodło się",
         "description": ""
     },
-    "menuItemSearchExactly": {
+    "menuItemSearchExactlyGoogle": {
         "message": "Szukaj dokładnie w Google",
+        "description": ""
+    },
+    "menuItemSearchExactlyDdg": {
+        "message": "Szukaj dokładnie w DuckDuckGo",
         "description": ""
     }
 }
