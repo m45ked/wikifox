@@ -1,5 +1,9 @@
 import { ContextType } from "../content/types";
 
+function getTranslation(itemId: string, substitutions? :any): string {
+    return browser.i18n.getMessage(itemId, substitutions);
+}
+
 function onCreated() {
     const error = browser.runtime.lastError;
     if (error) {
@@ -68,27 +72,29 @@ async function _searchExactlyDdg(_info: browser.menus.OnClickData, _tabId: numbe
     openNewTab(_info.selectionText || "", "duckduckgo");
 }
 
-
 async function _searchExactlyGoogle(_info: browser.menus.OnClickData, _tabId: number) {
     openNewTab(_info.selectionText || "", "google");
+}
+
+async function _sendMessage(_tabId: number, _actionId: string): Promise<any> {
+    return await browser.tabs.sendMessage(_tabId, {
+        action: _actionId,
+        options: {
+            includeHtml: true,
+            includeImages: false
+        }
+    });
 }
 
 async function _composeSource(_info: browser.menus.OnClickData, _tabId: number) {
     _safeCall({
         call: async () => {
-            const response: ContextType = await browser.tabs.sendMessage(_tabId, {
-                action: "getSourceData",
-                options: {
-                    includeHtml: true,
-                    includeImages: false
-                }
-            });
-
+            const response: ContextType = await _sendMessage(_tabId, "getSourceData");
             const fmtResponse = _formatSource(response);
             const copyResult = _copyToClipboard(fmtResponse);
 
             if (copyResult) {
-                
+
                 browser.notifications.create({
                     type: "basic",
                     title: browser.i18n.getMessage("notificationTitle"),
@@ -126,7 +132,7 @@ const extensionMenuItems: HostData[] = [
         actions: [
             {
                 id: "compose-source",
-                title: browser.i18n.getMessage("menuItemComposeSource"),
+                title: getTranslation("menuItemComposeSource"),
                 callback: _composeSource,
                 contexts: ["page"]
             }
@@ -137,13 +143,13 @@ const extensionMenuItems: HostData[] = [
         actions: [
             {
                 id: "search-exactly-Google",
-                title: browser.i18n.getMessage("menuItemSearchExactlyGoogle"),
+                title: getTranslation("menuItemSearchExactly", "Google"),
                 callback: _searchExactlyGoogle,
                 contexts: ["selection"]
             },
             {
                 id: "search-exactly-Ddg",
-                title: browser.i18n.getMessage("menuItemSearchExactlyDdg"),
+                title: getTranslation("menuItemSearchExactly", "duckduckgo"),
                 callback: _searchExactlyDdg,
                 contexts: ["selection"]
             }
@@ -169,7 +175,6 @@ browser.tabs.onActivated.addListener(async (_info) => {
     const tab = await browser.tabs.get(_info.tabId);
     _updateMenuForTab(_info.tabId, { url: tab.url });
 });
-
 
 async function _updateMenuForTab(_tabId: number, _changeInfo: ChangeInfo): Promise<void> {
     const url = _changeInfo.url;

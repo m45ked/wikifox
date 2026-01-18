@@ -11,12 +11,14 @@
         "message": "Kopiowanie powiodło się",
         "description": ""
     },
-    "menuItemSearchExactlyGoogle": {
-        "message": "Szukaj dokładnie w Google",
-        "description": ""
-    },
-    "menuItemSearchExactlyDdg": {
-        "message": "Szukaj dokładnie w DuckDuckGo",
-        "description": ""
+    "menuItemSearchExactly": {
+        "message": "Szukaj dokładnie w $HOST$",
+        "description": "",
+        "placeholders": {
+            "host": {
+                "content": "$1",
+                "example": "Google"
+            }
+        }
     }
 }
