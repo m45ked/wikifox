@@ -15,7 +15,8 @@ Wyszukiwanie bezwglęne
 ---
 
 Na stronach `https://pl.wiktionary.org/wiki/*`, po zaznaczeniu tekstu, możliwe
-jest wywołanie wyszukiwania bezpośrednio w Google wg dokładnej frazy (z "").
+jest wywołanie wyszukiwania bezpośrednio w DuckDuckGo oraz Google wg dokładnej
+frazy (z "").
 
 Budowa i instalacja
 ===
