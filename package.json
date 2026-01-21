@@ -8,7 +8,7 @@
   "scripts": {
     "build:watch": "tsc --watch",
     "package": "web-ext build",
-    "postbuild": "cp manifest.json dist && cp -R _locales dist",
+    "postbuild": "cp manifest.json dist && cp -R _locales dist && cp -R static dist",
     "clean": "rm -rf dist/*",
     "build:extension": "tsc --project tsconfig.json",
     "build:scripts": "tsc --project scripts/tsconfig.json",

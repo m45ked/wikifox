@@ -18,6 +18,9 @@ Rozszerzenie dodaje opcję w menu kontekstowym na stronach `https://pl.wikipedia
 "Utwórz opis referencji".
 Formatuje on dane strony do formatu [Szablon:zWikiprojektu](https://pl.wiktionary.org/wiki/Szablon:zWikiprojektu).
 
+Opcje
+* Opcjonalne włączenie pochyłej czcionki w tytule.
+
 Wyszukiwanie bezwglęne
 ---
 

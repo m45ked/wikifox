@@ -13,9 +13,12 @@ function onCreated() {
     }
 }
 
-function _formatSource(context: ContextType): string {
+async function _formatSource(context: ContextType): Promise<string> {
+    const setting = await browser.storage.local.get('italicTitle');
+    const title = setting['italicTitle'] === true ? `''${context.title}''` : `${context.title}`
+
     return `<ref>{{źródło|dostęp=otwarty|autor=${context.author}|`
-        + `tytuł=${context.title}|rok=${context.year}|miejsce=${context.place}|`
+        + `tytuł=${title}|rok=${context.year}|miejsce=${context.place}|`
         + `wydawnictwo=${context.publisher}}}</ref>`;
 }
 
@@ -59,12 +62,12 @@ async function _searchExactlyGoogle(_info: browser.menus.OnClickData, _tabId: nu
 
 
 const copyToClipboard = async (text: string) => {
-  try {
-    await navigator.clipboard.writeText(text);
-    console.log('Text copied to clipboard successfully');
-  } catch (error) {
-    console.error('Unable to copy text to clipboard: ', error);
-  }
+    try {
+        await navigator.clipboard.writeText(text);
+        console.log('Text copied to clipboard successfully');
+    } catch (error) {
+        console.error('Unable to copy text to clipboard: ', error);
+    }
 };
 
 async function _copyReferenceInfo(_info: browser.menus.OnClickData, _tabId: number) {
@@ -94,7 +97,7 @@ async function _composeSource(_info: browser.menus.OnClickData, _tabId: number) 
     _safeCall({
         call: async () => {
             const response: ContextType = await _sendMessage(_tabId, "getSourceData");
-            const fmtResponse = _formatSource(response);
+            const fmtResponse = await _formatSource(response);
             const copyResult = copyToClipboard(fmtResponse);
 
             if (!copyResult)

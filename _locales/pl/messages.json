@@ -16,5 +16,8 @@
     "menuItemCopyReferenceInfo": {
         "message": "Utwórz opis referencji",
         "description": "Utwórz wartość węzła <ref>"
+    },
+    "settingsSaved": {
+        "message": "Ustawienia zapisane!"
     }
 }
