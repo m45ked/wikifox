@@ -13,7 +13,9 @@
     "default_locale": "pl",
     "content_scripts": [
         {
-            "matches": ["https://pl.wikisource.org/wiki/*"],
+            "matches": [
+                "https://pl.wikisource.org/wiki/*"
+            ],
             "js": [
                 "content/wikisource.js"
             ],
