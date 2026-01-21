@@ -20,6 +20,15 @@
                 "content/wikisource.js"
             ],
             "run_at": "document_end"
+        },
+        {
+            "matches": [
+                "https://pl.wikipedia.org/w/index.php?oldid=*"
+            ],
+            "js": [
+                "content/wikipedia.js"
+            ],
+            "run_at": "document_end"
         }
     ],
     "background": {

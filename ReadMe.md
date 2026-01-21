@@ -11,6 +11,13 @@ Rozszerzenie dodaje opcję w menu kontekstowym na stronach `https://pl.wikisourc
 "Utwórz opis dla wiktionary".
 Formatuje on *Dane tekstu* do formatu [Szablon:źródło](https://pl.wiktionary.org/wiki/Szablon:%C5%BAr%C3%B3d%C5%82o).
 
+Cytowanie wikipedii
+---
+
+Rozszerzenie dodaje opcję w menu kontekstowym na stronach `https://pl.wikipedia.org/w/indeh.php?oldid=*`
+"Utwórz opis referencji".
+Formatuje on dane strony do formatu [Szablon:zWikiprojektu](https://pl.wiktionary.org/wiki/Szablon:zWikiprojektu).
+
 Wyszukiwanie bezwglęne
 ---
 

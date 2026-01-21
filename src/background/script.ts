@@ -1,4 +1,4 @@
-import { ContextType } from "../content/types";
+import { ContextType, ReferenceInfo } from "../content/types";
 
 function getTranslation(itemId: string, substitutions?: any): string {
     return browser.i18n.getMessage(itemId, substitutions);
@@ -34,25 +34,6 @@ function _safeCall(callable: Callable): boolean {
     return true;
 }
 
-function _copyToClipboard(text: string): boolean {
-    return _safeCall({
-        call: () => {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            textarea.style.position = 'fixed';
-            textarea.style.left = '-9999px';
-            document.body.appendChild(textarea);
-            textarea.select();
-
-            const success = document.execCommand('copy');
-            document.body.removeChild(textarea);
-
-            if (!success)
-                throw new Error("Error while copying content");
-        }
-    });
-}
-
 function openNewTab(query: string, host: string) {
     _safeCall({
         call: () => {
@@ -76,6 +57,29 @@ async function _searchExactlyGoogle(_info: browser.menus.OnClickData, _tabId: nu
     openNewTab(_info.selectionText || "", "google");
 }
 
+
+const copyToClipboard = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    console.log('Text copied to clipboard successfully');
+  } catch (error) {
+    console.error('Unable to copy text to clipboard: ', error);
+  }
+};
+
+async function _copyReferenceInfo(_info: browser.menus.OnClickData, _tabId: number) {
+    _safeCall({
+        call: async () => {
+            const response: ReferenceInfo = await _sendMessage(_tabId, "getReferenceInfo");
+            const formattedReference = `<ref>{{zWikiprojektu|hasło=${response.title}|oldid=${response.oldid}}}</ref>`;
+            const copyResult = copyToClipboard(formattedReference);
+
+            if (!copyResult)
+                console.debug(`Error during copy`);
+        }
+    });
+}
+
 async function _sendMessage(_tabId: number, _actionId: string): Promise<any> {
     return await browser.tabs.sendMessage(_tabId, {
         action: _actionId,
@@ -91,7 +95,7 @@ async function _composeSource(_info: browser.menus.OnClickData, _tabId: number) 
         call: async () => {
             const response: ContextType = await _sendMessage(_tabId, "getSourceData");
             const fmtResponse = _formatSource(response);
-            const copyResult = _copyToClipboard(fmtResponse);
+            const copyResult = copyToClipboard(fmtResponse);
 
             if (!copyResult)
                 console.debug(`Error during copy`);
@@ -144,6 +148,17 @@ const extensionMenuItems: HostData[] = [
                 title: getTranslation("menuItemSearchExactly", "duckduckgo"),
                 callback: _searchExactlyDdg,
                 contexts: ["selection"]
+            }
+        ]
+    },
+    {
+        host: "pl.wikipedia.org",
+        actions: [
+            {
+                id: "copy-reference-info",
+                title: getTranslation("menuItemCopyReferenceInfo"),
+                callback: _copyReferenceInfo,
+                contexts: ["page"]
             }
         ]
     }

@@ -12,5 +12,9 @@
                 "example": "Google"
             }
         }
+    },
+    "menuItemCopyReferenceInfo": {
+        "message": "Utwórz opis referencji",
+        "description": "Utwórz wartość węzła <ref>"
     }
 }

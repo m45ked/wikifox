@@ -12,5 +12,9 @@
                 "example": "Google"
             }
         }
+    },
+    "menuItemCopyReferenceInfo": {
+        "message": "Create ref description",
+        "description": "Create tag <ref> content"
     }
 }

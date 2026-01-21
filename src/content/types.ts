@@ -6,4 +6,9 @@ export interface ContextType {
     place: string;
 }
 
+export interface ReferenceInfo {
+    title: string;
+    oldid: string;
+}
+
 console.log('Types loaded');
