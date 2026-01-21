@@ -23,7 +23,7 @@
         },
         {
             "matches": [
-                "https://pl.wikipedia.org/w/index.php?oldid=*"
+                "https://pl.wikipedia.org/w/index.php?*"
             ],
             "js": [
                 "content/wikipedia.js"
