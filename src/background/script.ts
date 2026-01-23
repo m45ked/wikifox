@@ -72,7 +72,7 @@ const copyToClipboard = async (text: string) => {
 
 async function _copyAsWikitext(_info: browser.menus.OnClickData, _tabId: number) {
     _safeCall({call: async () => {
-        const matches = _info.selectionText?.matchAll(/([a-żA-Ż]+)/g);
+        const matches = _info.selectionText?.matchAll(/([a-żA-Ż\-]+)/g);
         if (!matches)
             return;
 
