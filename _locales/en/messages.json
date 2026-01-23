@@ -19,5 +19,8 @@
     },
     "settingsSaved": {
         "message": "Settings saved!"
+    },
+    "menuItemCopyAsWikitext": {
+        "message": "Copy as wikitext"
     }
 }

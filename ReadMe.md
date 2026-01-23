@@ -14,6 +14,8 @@ Formatuje on *Dane tekstu* do formatu [Szablon:źródło](https://pl.wiktionary.
 Cytowanie wikipedii
 ---
 
+Dodano opcję menu po zaznaczeniu frafmentu artykułu *Kopiuj jako wikitext*.
+
 Rozszerzenie dodaje opcję w menu kontekstowym na stronach `https://pl.wikipedia.org/w/indeh.php?oldid=*`
 "Utwórz opis referencji".
 Formatuje on dane strony do formatu [Szablon:zWikiprojektu](https://pl.wiktionary.org/wiki/Szablon:zWikiprojektu).

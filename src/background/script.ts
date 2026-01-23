@@ -70,6 +70,21 @@ const copyToClipboard = async (text: string) => {
     }
 };
 
+async function _copyAsWikitext(_info: browser.menus.OnClickData, _tabId: number) {
+    _safeCall({call: async () => {
+        const matches = _info.selectionText?.matchAll(/([a-żA-Ż]+)/g);
+        if (!matches)
+            return;
+
+        let result = "";
+        for (const match of matches) {
+            result += `[[${match[1]}]] `;
+        }
+
+        copyToClipboard(result.substring(0, result.length-1));
+    }})
+}
+
 async function _copyReferenceInfo(_info: browser.menus.OnClickData, _tabId: number) {
     _safeCall({
         call: async () => {
@@ -162,6 +177,12 @@ const extensionMenuItems: HostData[] = [
                 title: getTranslation("menuItemCopyReferenceInfo"),
                 callback: _copyReferenceInfo,
                 contexts: ["page"]
+            },
+            {
+                id: "copy-as-wikitext",
+                title: getTranslation("menuItemCopyAsWikitext"),
+                callback: _copyAsWikitext,
+                contexts: ["selection"]
             }
         ]
     }
