@@ -176,7 +176,7 @@ const extensionMenuItems: HostData[] = [
                 id: "copy-reference-info",
                 title: getTranslation("menuItemCopyReferenceInfo"),
                 callback: _copyReferenceInfo,
-                contexts: ["page"]
+                contexts: ["page", "selection"]
             },
             {
                 id: "copy-as-wikitext",
