@@ -43,11 +43,9 @@ function openNewTab(query: string, host: string) {
             if (!query)
                 return;
 
-            const encodedQuery = encodeURIComponent(`"${query}"`);
-            const searchUrl = `https://www.${host}.com/search?q=${encodedQuery}`;
-            browser.tabs.create({
-                url: searchUrl
-            });
+            const url = new URL(`https://www.${host}.com/search`);
+            url.searchParams.append("q", `"${query}" -ai`);
+            browser.tabs.create({ url: url.toString() });
         }
     });
 }
