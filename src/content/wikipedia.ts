@@ -5,7 +5,7 @@ function _getGroupFromString(s: string, r: RegExp) : string {
     if (!groups)
         return "";
 
-    return decodeURI(groups[1].replace("_", " "));
+    return decodeURI(groups[1]).replace(/\_/g, " ");
 }
 
 browser.runtime.onMessage.addListener((_message, _sender, _sendResponse) => {
