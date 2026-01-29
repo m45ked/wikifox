@@ -69,27 +69,37 @@ const copyToClipboard = async (text: string) => {
 };
 
 async function _copyAsWikitext(_info: browser.menus.OnClickData, _tabId: number) {
-    _safeCall({call: async () => {
-        const matches = _info.selectionText?.matchAll(/([a-żA-Ż\-]+)/g);
-        if (!matches)
-            return;
+    _safeCall({
+        call: async () => {
+            const matches = _info.selectionText?.matchAll(/([a-żA-Ż\-]+)/g);
+            if (!matches)
+                return;
 
-        let result = "";
-        for (const match of matches) {
-            result += `[[${match[1]}]] `;
+            let result = "";
+            for (const match of matches) {
+                result += `[[${match[1]}]] `;
+            }
+
+            result = result.substring(0, result.length - 1);
+            result += await getReferenceInfo(_tabId);
+
+            if (_info.selectionText?.charAt(_info.selectionText.length) == '.')
+                result += ".";
+
+            copyToClipboard(result);
         }
+    })
+}
 
-        copyToClipboard(result.substring(0, result.length-1));
-    }})
+async function getReferenceInfo(tabId: number): Promise<string> {
+    const response: ReferenceInfo = await _sendMessage(tabId, "getReferenceInfo");
+    return `<ref>{{zWikiprojektu|hasło=${response.title}|oldid=${response.oldid}}}</ref>`;
 }
 
 async function _copyReferenceInfo(_info: browser.menus.OnClickData, _tabId: number) {
     _safeCall({
         call: async () => {
-            const response: ReferenceInfo = await _sendMessage(_tabId, "getReferenceInfo");
-            const formattedReference = `<ref>{{zWikiprojektu|hasło=${response.title}|oldid=${response.oldid}}}</ref>`;
-            const copyResult = copyToClipboard(formattedReference);
-
+            const copyResult = copyToClipboard(await getReferenceInfo(_tabId));
             if (!copyResult)
                 console.debug(`Error during copy`);
         }
