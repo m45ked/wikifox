@@ -34,6 +34,14 @@
                 "content/wikipedia.js"
             ],
             "run_at": "document_end"
+        },
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "utils/tooltip.js"
+            ]
         }
     ],
     "background": {

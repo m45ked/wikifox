@@ -62,9 +62,9 @@ async function _searchExactlyGoogle(_info: browser.menus.OnClickData, _tabId: nu
 const copyToClipboard = async (text: string) => {
     try {
         await navigator.clipboard.writeText(text);
-        console.log('Text copied to clipboard successfully');
+        return true;
     } catch (error) {
-        console.error('Unable to copy text to clipboard: ', error);
+        return false;
     }
 };
 
@@ -87,7 +87,9 @@ async function _copyAsWikitext(_info: browser.menus.OnClickData, _tabId: number)
             if (_info.selectionText?.charAt(_info.selectionText.length) == '.')
                 result += ".";
 
-            copyToClipboard(result);
+            const r = await copyToClipboard(result);
+            if (r)
+                _sendGetSourceMessage(_tabId, "showTooltip");
         }
     })
 }
@@ -105,12 +107,12 @@ function _getLanguageFromUrl(url: string): string {
 }
 
 async function getReferenceInfo(tabId: number, language: string): Promise<string> {
-    const response: ReferenceInfo = await _sendMessage(tabId, "getReferenceInfo");
+    const response: ReferenceInfo = await _sendGetSourceMessage(tabId, "getReferenceInfo");
     const languagePart = language === defaultLanguageCode ? "" : `|język=${language}`;
     return `<ref>{{zWikiprojektu${languagePart}|hasło=${response.title}|oldid=${response.oldid}}}</ref>`;
 }
 
-async function getUrlFromTab(tabId: number) : Promise<string> {
+async function getUrlFromTab(tabId: number): Promise<string> {
     return (await browser.tabs.get(tabId)).url || "";
 }
 
@@ -118,14 +120,22 @@ async function _copyReferenceInfo(_info: browser.menus.OnClickData, _tabId: numb
     _safeCall({
         call: async () => {
             const url = await getUrlFromTab(_tabId);
-            const copyResult = copyToClipboard(await getReferenceInfo(_tabId, _getLanguageFromUrl(url)));
-            if (!copyResult)
-                console.debug(`Error during copy`);
+            const copyResult = await copyToClipboard(
+                await getReferenceInfo(_tabId, _getLanguageFromUrl(url)));
+            if (copyResult)
+                _sendShowTooltipMessage("Skopiowano do schowka", _tabId);
         }
     });
 }
 
-async function _sendMessage(_tabId: number, _actionId: string): Promise<any> {
+async function _sendShowTooltipMessage(msg: string, _tabId: number) {
+        return await browser.tabs.sendMessage(_tabId, {
+        action: "showTooltip",
+        "msg": msg
+    });
+}
+
+async function _sendGetSourceMessage(_tabId: number, _actionId: string): Promise<any> {
     return await browser.tabs.sendMessage(_tabId, {
         action: _actionId,
         options: {
@@ -138,12 +148,10 @@ async function _sendMessage(_tabId: number, _actionId: string): Promise<any> {
 async function _composeSource(_info: browser.menus.OnClickData, _tabId: number) {
     _safeCall({
         call: async () => {
-            const response: ContextType = await _sendMessage(_tabId, "getSourceData");
+            const response: ContextType = await _sendGetSourceMessage(_tabId, "getSourceData");
             const fmtResponse = await _formatSource(response);
-            const copyResult = copyToClipboard(fmtResponse);
-
-            if (!copyResult)
-                console.debug(`Error during copy`);
+            if (await copyToClipboard(fmtResponse))
+                _sendShowTooltipMessage("Skopiowano do schowka", _tabId);
         }
     });
 }
