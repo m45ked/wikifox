@@ -16,7 +16,7 @@ browser.runtime.onMessage.addListener((_message, _sender, _sendResponse) => {
             return true;
         const url = (elem.children.item(0) as HTMLAnchorElement).href;
         const ri: ReferenceInfo = {
-            title: _getGroupFromString(url, /title=([a-żA-Ż0-9_%\(\)\.]+)/),
+            title: _getGroupFromString(url, /title=([a-żA-Ż0-9_%\(\)\.\-\–]+)/),
             oldid: _getGroupFromString(url, /oldid=(\d+)/)
         };
         _sendResponse(ri);
