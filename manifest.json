@@ -28,7 +28,7 @@
         },
         {
             "matches": [
-                "https://pl.wikipedia.org/*"
+                "https://*.wikipedia.org/*"
             ],
             "js": [
                 "content/wikipedia.js"

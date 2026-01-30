@@ -81,7 +81,8 @@ async function _copyAsWikitext(_info: browser.menus.OnClickData, _tabId: number)
             }
 
             result = result.substring(0, result.length - 1);
-            result += await getReferenceInfo(_tabId);
+            const url = await getUrlFromTab(_tabId);
+            result += await getReferenceInfo(_tabId, _getLanguageFromUrl(url));
 
             if (_info.selectionText?.charAt(_info.selectionText.length) == '.')
                 result += ".";
@@ -91,15 +92,33 @@ async function _copyAsWikitext(_info: browser.menus.OnClickData, _tabId: number)
     })
 }
 
-async function getReferenceInfo(tabId: number): Promise<string> {
+const defaultLanguageCode = "pl";
+
+function _getLanguageFromUrl(url: string): string {
+    const idx = url.indexOf('.');
+    if (!idx)
+        return defaultLanguageCode;
+    const language = url.substring(8, idx);
+    if (!language)
+        return defaultLanguageCode;
+    return language;
+}
+
+async function getReferenceInfo(tabId: number, language: string): Promise<string> {
     const response: ReferenceInfo = await _sendMessage(tabId, "getReferenceInfo");
-    return `<ref>{{zWikiprojektu|hasło=${response.title}|oldid=${response.oldid}}}</ref>`;
+    const languagePart = language === defaultLanguageCode ? "" : `|język=${language}`;
+    return `<ref>{{zWikiprojektu${languagePart}|hasło=${response.title}|oldid=${response.oldid}}}</ref>`;
+}
+
+async function getUrlFromTab(tabId: number) : Promise<string> {
+    return (await browser.tabs.get(tabId)).url || "";
 }
 
 async function _copyReferenceInfo(_info: browser.menus.OnClickData, _tabId: number) {
     _safeCall({
         call: async () => {
-            const copyResult = copyToClipboard(await getReferenceInfo(_tabId));
+            const url = await getUrlFromTab(_tabId);
+            const copyResult = copyToClipboard(await getReferenceInfo(_tabId, _getLanguageFromUrl(url)));
             if (!copyResult)
                 console.debug(`Error during copy`);
         }
@@ -178,7 +197,7 @@ const extensionMenuItems: HostData[] = [
         ]
     },
     {
-        host: "pl.wikipedia.org",
+        host: "wikipedia.org",
         actions: [
             {
                 id: "copy-reference-info",
@@ -204,10 +223,8 @@ interface ChangeInfo {
 
 browser.tabs.onUpdated.addListener(async (_tabId, _changeInfo) => {
     if (_changeInfo.status === 'complete') {
-        const tab = await browser.tabs.get(_tabId);
-        if (!tab.url)
-            return;
-        _updateMenuForTab(_tabId, { url: tab.url });
+        const url = await getUrlFromTab(_tabId);
+        _updateMenuForTab(_tabId, { url: url });
     }
 });
 browser.tabs.onActivated.addListener(async (_info) => {
