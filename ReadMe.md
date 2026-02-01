@@ -27,6 +27,7 @@ Opcje
 1. Wyszukiwanie bezwglęne – po zaznaczeniu tekstu, możliwe jest wywołanie
 wyszukiwania bezpośrednio w DuckDuckGo oraz Google wg dokładnej frazy (z "").
 1. Kopiwanie przykładu – przycisk akcji *Kopiuj*, kopiującego treści przykładu.
+1. Pole z informacją o posiadanym źródle.
 
 ## Budowa i instalacja
 

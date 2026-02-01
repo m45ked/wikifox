@@ -22,5 +22,11 @@
     },
     "menuItemCopyAsWikitext": {
         "message": "Copy as wikitext"
+    },
+    "hasReference": {
+        "message": "Has reference"
+    },
+    "hasNotReference": {
+        "message": "Has not reference"
     }
 }
