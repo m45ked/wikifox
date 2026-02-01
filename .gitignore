@@ -1,5 +1,6 @@
 node_modules
 dist
+.dist
 .vscode
 web-ext-artifacts
 package-lock.json

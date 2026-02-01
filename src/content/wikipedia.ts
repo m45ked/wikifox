@@ -1,6 +1,6 @@
 import { ReferenceInfo } from "./types";
 
-function _getGroupFromString(s: string, r: RegExp) : string {
+function _getGroupFromString(s: string, r: RegExp): string {
     const groups = s.match(r);
     if (!groups)
         return "";
@@ -10,7 +10,7 @@ function _getGroupFromString(s: string, r: RegExp) : string {
 
 browser.runtime.onMessage.addListener((_message, _sender, _sendResponse) => {
     if (_message.action === "getReferenceInfo") {
-        
+
         const elem = document.getElementById("t-permalink");
         if (!elem)
             return true;

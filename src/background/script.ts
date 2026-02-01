@@ -275,3 +275,15 @@ async function _clearCustomMenuItems() {
 
     activeMenus.length = 0;
 }
+
+browser.runtime.onMessage.addListener(async (_message, _sender, _sendResponse) => {
+    if (_message.action === "wikifox://background/copyToClipboard")
+    {
+        const r = await copyToClipboard(_message.text);
+        if (r)
+            _sendResponse(0);
+        else
+            _sendResponse(1);
+    }
+    return true;
+});

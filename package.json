@@ -5,15 +5,22 @@
   "license": "ISC",
   "author": "",
   "type": "module",
+  "module": "ESNext",
   "scripts": {
     "build:watch": "tsc --watch",
     "package": "web-ext build",
-    "postbuild": "cp manifest.json dist && cp -R _locales dist && cp -R static dist",
+    "vite": "npx vite build",
+    "copy:manifest": "cp manifest.json dist",
+    "copy:locales": "cp -R _locales dist",
+    "copy:static": "cp -R static dist",
+    "copy": "npm run copy:manifest && npm run copy:locales && npm run copy:static",
+    "postbuild": "npm run copy",
     "clean": "rm -rf dist/*",
+    "build:content": "BUILD_TARGET=content vite build",
     "build:extension": "tsc --project tsconfig.json",
     "build:scripts": "tsc --project scripts/tsconfig.json",
     "cleanup": "node scripts/cleanup.cjs",
-    "build": "npm run build:extension && npm run cleanup",
+    "build": "npm run build:extension && npm run build:content && npm run cleanup",
     "dev": "npm run build && web-ext run --source-dir=dist"
   },
   "devDependencies": {
@@ -21,8 +28,13 @@
     "copy-webpack-plugin": "^11.0.0",
     "ts-loader": "^9.0.0",
     "typescript": "^5.9.3",
+    "vite": "^7.3.1",
     "web-ext": "^9.2.0",
     "webpack": "^5.0.0",
     "webpack-cli": "^5.0.0"
+  },
+  "resolutions": {
+    "**/@typescript-eslint/eslint-plugin": "^4.1.1",
+    "**/@typescript-eslint/parser": "^4.1.1"
   }
 }

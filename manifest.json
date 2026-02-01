@@ -9,7 +9,8 @@
         "notifications",
         "activeTab",
         "tabs",
-        "storage"
+        "storage",
+        "clipboardWrite"
     ],
     "options_ui": {
         "page": "static/options.html",
@@ -32,6 +33,15 @@
             ],
             "js": [
                 "content/wikipedia.js"
+            ],
+            "run_at": "document_end"
+        },
+        {
+            "matches": [
+                "https://*.wiktionary.org/*"
+            ],
+            "js": [
+                "content/wiktionary.js"
             ],
             "run_at": "document_end"
         },
