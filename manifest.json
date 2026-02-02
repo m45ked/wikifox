@@ -41,7 +41,7 @@
                 "https://*.wiktionary.org/*"
             ],
             "js": [
-                "content/wiktionary.js"
+                "content/add-copy-button.js"
             ],
             "run_at": "document_end"
         },
@@ -50,7 +50,8 @@
                 "https://pl.wiktionary.org/w/index.php*"
             ],
             "js": [
-                "content/modify-wiktionary-form.js"
+                "content/modify-wiktionary-form.js",
+                "content/add-form-events.js"
             ],
             "run_at": "document_end"
         },

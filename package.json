@@ -5,7 +5,10 @@
   "license": "ISC",
   "author": "",
   "type": "module",
+  "inlineSourceMap": true,
   "module": "ESNext",
+  "sourceMap": true,
+  "mapRoot": "./dist",
   "scripts": {
     "build:watch": "tsc --watch",
     "package": "web-ext build",

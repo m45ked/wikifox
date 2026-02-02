@@ -28,6 +28,7 @@ Opcje
 wyszukiwania bezpośrednio w DuckDuckGo oraz Google wg dokładnej frazy (z "").
 1. Kopiwanie przykładu – przycisk akcji *Kopiuj*, kopiującego treści przykładu.
 1. Pole z informacją o posiadanym źródle.
+1. Automatyzacja opisu dla wklejania treści z tekstem "zWikiprojektu" w polu przykładów.
 
 ## Budowa i instalacja
 

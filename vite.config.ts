@@ -1,17 +1,16 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ }) => {
   return {
     build: {
-      minify: mode === 'production',
-      sourcemap: mode === 'development',        // Dodaj mapy źródłowe
+      minify: false,
+      sourcemap: true,
       cssCodeSplit: false,
       emptyOutDir: false,
       rollupOptions: {
-        input: resolve(__dirname, 'src/content/wiktionary.ts'),
+        input: resolve(__dirname, 'src/content/add-copy-button.ts'),
         output: {
-          // Tworzy jeden plik bez chunków
           manualChunks: undefined,
           entryFileNames: '[name].js',
           assetFileNames: '[name].[ext]',
@@ -19,7 +18,8 @@ export default defineConfig(({ mode }) => {
           format: "iife",
           dir: resolve(__dirname, 'dist/content'),
           inlineDynamicImports: true,
-          name:  'wiktionary',
+          extend: true,
+          name: 'add-copy-button',
         }
       },
       chunkSizeWarningLimit: 1000

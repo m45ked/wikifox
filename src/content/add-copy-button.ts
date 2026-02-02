@@ -6,6 +6,7 @@ function createButton(selector: () => HTMLElement): HTMLElement {
     button.disabled = false;
     button.textContent = 'Skopiuj';
     button.formMethod = 'post';
+    button.classList.add('wikifox-ui-button');
     button.id = `btn-${Date.now()}`;
     button.addEventListener('click', async (e: MouseEvent) => {
         e.preventDefault();
@@ -29,12 +30,12 @@ function createButton(selector: () => HTMLElement): HTMLElement {
 }
 
 function _addButton(node: Element): void {
-    const selectItalic = () => { 
+    const selectItalic = () => {
         const n = node.querySelector("i");
         if (!n) throw Error("dups");
         else
             return n;
-     };
+    };
     const firstElement = node.childNodes.item(0);
     node.insertBefore(createButton(selectItalic), firstElement);
 
@@ -44,6 +45,7 @@ function _addButton(node: Element): void {
     const checkbox = document.createElement('input') as HTMLInputElement;
     checkbox.type = 'checkbox';
     checkbox.disabled = true;
+    checkbox.classList += 'wikifox-ui-checkbox';
     checkbox.checked = hasReference;
     checkbox.title = hasReference
         ? browser.i18n.getMessage('hasReference')
@@ -54,15 +56,13 @@ function _addButton(node: Element): void {
     node.insertBefore(checkbox, firstElement);
 }
 
-let ran = false;
-const observer = new MutationObserver((): void => {
-    if (ran)
+function addExampleAddons() {
+    if (document.querySelector('button.wikifox-ui-button'))
         return;
 
-    const noweElementy = document.querySelectorAll('dd.fldt-przyklady');
-    if (noweElementy.length === 0)
-        return;
-    noweElementy.forEach((e) => { _addButton(e); })
-    ran = true;
-});
+    document.querySelectorAll('dd.fldt-przyklady').forEach(
+        (e) => { _addButton(e); })
+}
+
+const observer = new MutationObserver(() => { addExampleAddons(); });
 observer.observe(document.body, { childList: true, subtree: true });
