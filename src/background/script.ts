@@ -4,7 +4,7 @@ function getTranslation(itemId: string, substitutions?: any): string {
     return browser.i18n.getMessage(itemId, substitutions);
 }
 
-function onCreated() {
+function onCreated(): void {
     const error = browser.runtime.lastError;
     if (error) {
         console.debug(`Error: ${error}`);
@@ -22,44 +22,37 @@ async function _formatSource(context: ContextType): Promise<string> {
         + `wydawnictwo=${context.publisher}}}</ref>`;
 }
 
-interface Callable {
-    call: () => void;
-};
-
-function _safeCall(callable: Callable): boolean {
+function _safeCall(callable: () => void): boolean {
     try {
-        callable.call();
+        callable();
+        return true;
     } catch (error) {
         console.debug("Error: ", error);
         return false;
     }
-
-    return true;
 }
 
-function openNewTab(query: string, host: string) {
-    _safeCall({
-        call: () => {
-            if (!query)
-                return;
+function openNewTab(query: string, host: string): void {
+    _safeCall((): void => {
+        if (!query)
+            return;
 
-            const url = new URL(`https://www.${host}.com/search`);
-            url.searchParams.append("q", `"${query}" -ai`);
-            browser.tabs.create({ url: url.toString() });
-        }
+        const url = new URL(`https://www.${host}.com/search`);
+        url.searchParams.append("q", `"${query}" -ai`);
+        browser.tabs.create({ url: url.toString() });
     });
 }
 
-async function _searchExactlyDdg(_info: browser.menus.OnClickData, _tabId: number) {
+async function _searchExactlyDdg(_info: browser.menus.OnClickData, _tabId: number): Promise<void> {
     openNewTab(_info.selectionText || "", "duckduckgo");
 }
 
-async function _searchExactlyGoogle(_info: browser.menus.OnClickData, _tabId: number) {
+async function _searchExactlyGoogle(_info: browser.menus.OnClickData, _tabId: number): Promise<void> {
     openNewTab(_info.selectionText || "", "google");
 }
 
 
-const copyToClipboard = async (text: string) => {
+const copyToClipboard = async (text: string): Promise<boolean> => {
     try {
         await navigator.clipboard.writeText(text);
         return true;
@@ -68,30 +61,28 @@ const copyToClipboard = async (text: string) => {
     }
 };
 
-async function _copyAsWikitext(_info: browser.menus.OnClickData, _tabId: number) {
-    _safeCall({
-        call: async () => {
-            const matches = _info.selectionText?.matchAll(/([a-żA-Ż\-]+)/g);
-            if (!matches)
-                return;
+async function _copyAsWikitext(_info: browser.menus.OnClickData, _tabId: number): Promise<void> {
+    _safeCall(async (): Promise<void> => {
+        const matches = _info.selectionText?.matchAll(/([a-żA-Ż\-]+)/g);
+        if (!matches)
+            return;
 
-            let result = "";
-            for (const match of matches) {
-                result += `[[${match[1]}]] `;
-            }
-
-            result = result.substring(0, result.length - 1);
-            const url = await getUrlFromTab(_tabId);
-            result += await getReferenceInfo(_tabId, _getLanguageFromUrl(url));
-
-            if (_info.selectionText?.charAt(_info.selectionText.length) == '.')
-                result += ".";
-
-            const r = await copyToClipboard(result);
-            if (r)
-                _sendGetSourceMessage(_tabId, "showTooltip");
+        let result = "";
+        for (const match of matches) {
+            result += `[[${match[1]}]] `;
         }
-    })
+
+        result = result.substring(0, result.length - 1);
+        const url = await getUrlFromTab(_tabId);
+        result += await getReferenceInfo(_tabId, _getLanguageFromUrl(url));
+
+        if (_info.selectionText?.charAt(_info.selectionText.length) == '.')
+            result += ".";
+
+        const r = await copyToClipboard(result);
+        if (r)
+            _sendGetSourceMessage(_tabId, "showTooltip");
+    });
 }
 
 const defaultLanguageCode = "pl";
@@ -116,20 +107,18 @@ async function getUrlFromTab(tabId: number): Promise<string> {
     return (await browser.tabs.get(tabId)).url || "";
 }
 
-async function _copyReferenceInfo(_info: browser.menus.OnClickData, _tabId: number) {
-    _safeCall({
-        call: async () => {
-            const url = await getUrlFromTab(_tabId);
-            const copyResult = await copyToClipboard(
-                await getReferenceInfo(_tabId, _getLanguageFromUrl(url)));
-            if (copyResult)
-                _sendShowTooltipMessage("Skopiowano do schowka", _tabId);
-        }
+async function _copyReferenceInfo(_info: browser.menus.OnClickData, _tabId: number): Promise<void> {
+    _safeCall(async (): Promise<void> => {
+        const url = await getUrlFromTab(_tabId);
+        const copyResult = await copyToClipboard(
+            await getReferenceInfo(_tabId, _getLanguageFromUrl(url)));
+        if (copyResult)
+            _sendShowTooltipMessage("Skopiowano do schowka", _tabId);
     });
 }
 
-async function _sendShowTooltipMessage(msg: string, _tabId: number) {
-        return await browser.tabs.sendMessage(_tabId, {
+async function _sendShowTooltipMessage(msg: string, _tabId: number): Promise<void> {
+    return await browser.tabs.sendMessage(_tabId, {
         action: "showTooltip",
         "msg": msg
     });
@@ -145,18 +134,16 @@ async function _sendGetSourceMessage(_tabId: number, _actionId: string): Promise
     });
 }
 
-async function _composeSource(_info: browser.menus.OnClickData, _tabId: number) {
-    _safeCall({
-        call: async () => {
-            const response: ContextType = await _sendGetSourceMessage(_tabId, "getSourceData");
-            const fmtResponse = await _formatSource(response);
-            if (await copyToClipboard(fmtResponse))
-                _sendShowTooltipMessage("Skopiowano do schowka", _tabId);
-        }
+async function _composeSource(_info: browser.menus.OnClickData, _tabId: number): Promise<void> {
+    _safeCall(async (): Promise<void> => {
+        const response: ContextType = await _sendGetSourceMessage(_tabId, "getSourceData");
+        const fmtResponse = await _formatSource(response);
+        if (await copyToClipboard(fmtResponse))
+            _sendShowTooltipMessage("Skopiowano do schowka", _tabId);
     });
 }
 
-browser.menus.onClicked.addListener(async function (_info, _tab) {
+browser.menus.onClicked.addListener(async function (_info, _tab): Promise<void> {
     if (_info.menuItemId !== 'compose-source' || !_tab?.id)
         return;
 
@@ -229,13 +216,13 @@ interface ChangeInfo {
     url: string | undefined;
 };
 
-browser.tabs.onUpdated.addListener(async (_tabId, _changeInfo) => {
+browser.tabs.onUpdated.addListener(async (_tabId, _changeInfo): Promise<void> => {
     if (_changeInfo.status === 'complete') {
         const url = await getUrlFromTab(_tabId);
         _updateMenuForTab(_tabId, { url: url });
     }
 });
-browser.tabs.onActivated.addListener(async (_info) => {
+browser.tabs.onActivated.addListener(async (_info): Promise<void> => {
     const tab = await browser.tabs.get(_info.tabId);
     _updateMenuForTab(_info.tabId, { url: tab.url });
 });
@@ -263,7 +250,7 @@ async function _updateMenuForTab(_tabId: number, _changeInfo: ChangeInfo): Promi
     }
 }
 
-async function _clearCustomMenuItems() {
+async function _clearCustomMenuItems(): Promise<void> {
     const oldItems = activeMenus || [];
 
     for (const id of oldItems) {
@@ -276,9 +263,8 @@ async function _clearCustomMenuItems() {
     activeMenus.length = 0;
 }
 
-browser.runtime.onMessage.addListener(async (_message, _sender, _sendResponse) => {
-    if (_message.action === "wikifox://background/copyToClipboard")
-    {
+browser.runtime.onMessage.addListener(async (_message, _sender, _sendResponse): Promise<boolean> => {
+    if (_message.action === "wikifox://background/copyToClipboard") {
         const r = await copyToClipboard(_message.text);
         if (r)
             _sendResponse(0);
