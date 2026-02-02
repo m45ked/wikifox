@@ -47,6 +47,15 @@
         },
         {
             "matches": [
+                "https://pl.wiktionary.org/w/index.php*"
+            ],
+            "js": [
+                "content/modify-wiktionary-form.js"
+            ],
+            "run_at": "document_end"
+        },
+        {
+            "matches": [
                 "<all_urls>"
             ],
             "js": [
