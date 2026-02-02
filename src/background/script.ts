@@ -1,5 +1,7 @@
 import { ContextType, ReferenceInfo } from "../content/types";
 
+type bmOnClickData = browser.menus.OnClickData;
+
 function getTranslation(itemId: string, substitutions?: any): string {
     return browser.i18n.getMessage(itemId, substitutions);
 }
@@ -43,11 +45,11 @@ function openNewTab(query: string, host: string): void {
     });
 }
 
-async function _searchExactlyDdg(_info: browser.menus.OnClickData, _tabId: number): Promise<void> {
+async function _searchExactlyDdg(_info: bmOnClickData, _tabId: number): Promise<void> {
     openNewTab(_info.selectionText || "", "duckduckgo");
 }
 
-async function _searchExactlyGoogle(_info: browser.menus.OnClickData, _tabId: number): Promise<void> {
+async function _searchExactlyGoogle(_info: bmOnClickData, _tabId: number): Promise<void> {
     openNewTab(_info.selectionText || "", "google");
 }
 
@@ -61,7 +63,7 @@ const copyToClipboard = async (text: string): Promise<boolean> => {
     }
 };
 
-async function _copyAsWikitext(_info: browser.menus.OnClickData, _tabId: number): Promise<void> {
+async function _copyAsWikitext(_info: bmOnClickData, _tabId: number): Promise<void> {
     _safeCall(async (): Promise<void> => {
         const matches = _info.selectionText?.matchAll(/([a-żA-Ż\-]+)/g);
         if (!matches)
@@ -107,7 +109,7 @@ async function getUrlFromTab(tabId: number): Promise<string> {
     return (await browser.tabs.get(tabId)).url || "";
 }
 
-async function _copyReferenceInfo(_info: browser.menus.OnClickData, _tabId: number): Promise<void> {
+async function _copyReferenceInfo(_info: bmOnClickData, _tabId: number): Promise<void> {
     _safeCall(async (): Promise<void> => {
         const url = await getUrlFromTab(_tabId);
         const copyResult = await copyToClipboard(
@@ -134,7 +136,7 @@ async function _sendGetSourceMessage(_tabId: number, _actionId: string): Promise
     });
 }
 
-async function _composeSource(_info: browser.menus.OnClickData, _tabId: number): Promise<void> {
+async function _composeSource(_info: bmOnClickData, _tabId: number): Promise<void> {
     _safeCall(async (): Promise<void> => {
         const response: ContextType = await _sendGetSourceMessage(_tabId, "getSourceData");
         const fmtResponse = await _formatSource(response);
@@ -153,7 +155,7 @@ browser.menus.onClicked.addListener(async function (_info, _tab): Promise<void> 
 interface Action {
     id: string;
     title: string;
-    callback: (info: browser.menus.OnClickData, tabId: number) => void;
+    callback: (info: bmOnClickData, tabId: number) => void;
     contexts: browser.menus.ContextType[];
 };
 
