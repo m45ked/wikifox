@@ -8,13 +8,14 @@ function createButton(selector: () => HTMLElement): HTMLElement {
     button.formMethod = 'post';
     button.classList.add('wikifox-ui-button');
     button.id = `btn-${Date.now()}`;
-    button.addEventListener('click', async (e: MouseEvent) => {
+    button.addEventListener('click', (e: MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
 
         const n = selector();
-        await navigator.clipboard.writeText(n.innerText);
-        showTooltip("Skopiowano");
+
+        navigator.clipboard.writeText(n.innerText)
+            .then(() => { showTooltip('Skoiowano') });
     });
     button.style.cssText = `
         padding: 5px 1px;
@@ -30,7 +31,7 @@ function createButton(selector: () => HTMLElement): HTMLElement {
 }
 
 function _addButton(node: Element): void {
-    const selectItalic = () => {
+    const selectItalic = (): HTMLElement => {
         const n = node.querySelector("i");
         if (!n) throw Error("dups");
         else
@@ -39,7 +40,7 @@ function _addButton(node: Element): void {
     const firstElement = node.childNodes.item(0);
     node.insertBefore(createButton(selectItalic), firstElement);
 
-    const selectSup = () => { return node.querySelector("sup"); };
+    const selectSup = (): HTMLElement | null => { return node.querySelector("sup"); };
     const supNode = selectSup();
     const hasReference = supNode !== null;
     const checkbox = document.createElement('input') as HTMLInputElement;
@@ -56,7 +57,7 @@ function _addButton(node: Element): void {
     node.insertBefore(checkbox, firstElement);
 }
 
-function addExampleAddons() {
+function addExampleAddons(): void {
     if (document.querySelector('button.wikifox-ui-button'))
         return;
 
@@ -64,5 +65,5 @@ function addExampleAddons() {
         (e) => { _addButton(e); })
 }
 
-const observer = new MutationObserver(() => { addExampleAddons(); });
+const observer = new MutationObserver((): void => { addExampleAddons(); });
 observer.observe(document.body, { childList: true, subtree: true });

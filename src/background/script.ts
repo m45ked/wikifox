@@ -83,7 +83,7 @@ async function _copyAsWikitext(_info: bmOnClickData, _tabId: number): Promise<vo
 
         const r = await copyToClipboard(result);
         if (r)
-            _sendGetSourceMessage(_tabId, "showTooltip");
+            _sendGetSourceMessage(_tabId, "wikifox://utils/tooltip");
     });
 }
 
@@ -100,7 +100,7 @@ function _getLanguageFromUrl(url: string): string {
 }
 
 async function getReferenceInfo(tabId: number, language: string): Promise<string> {
-    const response: ReferenceInfo = await _sendGetSourceMessage(tabId, "getReferenceInfo");
+    const response: ReferenceInfo = await _sendGetSourceMessage(tabId, "wikifox://content/getReferenceInfo");
     const languagePart = language === defaultLanguageCode ? "" : `|język=${language}`;
     return `<ref>{{zWikiprojektu${languagePart}|hasło=${response.title}|oldid=${response.oldid}}}</ref>`;
 }
@@ -121,7 +121,7 @@ async function _copyReferenceInfo(_info: bmOnClickData, _tabId: number): Promise
 
 async function _sendShowTooltipMessage(msg: string, _tabId: number): Promise<void> {
     return await browser.tabs.sendMessage(_tabId, {
-        action: "showTooltip",
+        action: "wikifox://utils/tooltip",
         "msg": msg
     });
 }

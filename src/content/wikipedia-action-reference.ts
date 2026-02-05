@@ -8,13 +8,13 @@ function _getGroupFromString(s: string, r: RegExp): string {
     return decodeURI(groups[1]).replace(/\_/g, " ");
 }
 
-browser.runtime.onMessage.addListener((_message, _sender, _sendResponse) => {
-    if (_message.action === "getReferenceInfo") {
+browser.runtime.onMessage.addListener((_message, _sender, _sendResponse): boolean => {
+    if (_message.action === "wikifox://content/getReferenceInfo") {
 
         const elem = document.getElementById("t-permalink");
         if (!elem)
             return true;
-        const url = (elem.children.item(0) as HTMLAnchorElement).href;
+        const url = (elem.children[0] as HTMLAnchorElement).href;
         const ri: ReferenceInfo = {
             title: _getGroupFromString(url, /title=([a-żA-Ż0-9_%\(\)\.\-\–]+)/),
             oldid: _getGroupFromString(url, /oldid=(\d+)/)

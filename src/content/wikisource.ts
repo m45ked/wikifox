@@ -10,7 +10,7 @@ function _getElementText(id: string): string {
     return node.textContent;
 };
 
-browser.runtime.onMessage.addListener((_message, _sender, _sendResponse) => {
+browser.runtime.onMessage.addListener((_message, _sender, _sendResponse): boolean => {
     if (_message.action === "getSourceData") {
         const _pageData: ContextType = {
             author: _getElementText("author"),

@@ -1,4 +1,4 @@
-function modifySummary() {
+function modifySummaryStyle(): void {
     const element = document.querySelector("#wpSummary");
     if (!element)
         return;
@@ -7,5 +7,4 @@ function modifySummary() {
     style.fontFamily = 'Consolas,"Lucida Console",monospace';
     style.fontSize = '10px';
 }
-
-modifySummary();
+modifySummaryStyle();

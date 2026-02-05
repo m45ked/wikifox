@@ -32,7 +32,8 @@
                 "https://*.wikipedia.org/*"
             ],
             "js": [
-                "content/wikipedia.js"
+                "content/wikipedia-action-reference.js",
+                "content/wikipedia-action-tooltip.js"
             ],
             "run_at": "document_end"
         },
@@ -54,14 +55,6 @@
                 "content/add-form-events.js"
             ],
             "run_at": "document_end"
-        },
-        {
-            "matches": [
-                "<all_urls>"
-            ],
-            "js": [
-                "utils/tooltip.js"
-            ]
         }
     ],
     "background": {

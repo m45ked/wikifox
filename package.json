@@ -19,7 +19,7 @@
     "copy": "npm run copy:manifest && npm run copy:locales && npm run copy:static",
     "postbuild": "npm run copy",
     "clean": "rm -rf dist/*",
-    "build:content": "BUILD_TARGET=content vite build",
+    "build:content": "BUILD_MODE=add-copy-button vite build && BUILD_MODE=wikipedia-action-tooltip vite build",
     "build:extension": "tsc --project tsconfig.json",
     "build:scripts": "tsc --project scripts/tsconfig.json",
     "cleanup": "node scripts/cleanup.cjs",
