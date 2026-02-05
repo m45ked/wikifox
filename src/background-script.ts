@@ -1,4 +1,4 @@
-import { ContextType, ReferenceInfo } from "../content/types";
+import { ContextType, ReferenceInfo } from "./content/types";
 
 type bmOnClickData = browser.menus.OnClickData;
 
@@ -33,26 +33,6 @@ function _safeCall(callable: () => void): boolean {
         return false;
     }
 }
-
-function openNewTab(query: string, host: string): void {
-    _safeCall((): void => {
-        if (!query)
-            return;
-
-        const url = new URL(`https://www.${host}.com/search`);
-        url.searchParams.append("q", `"${query}" -ai`);
-        browser.tabs.create({ url: url.toString() });
-    });
-}
-
-async function _searchExactlyDdg(_info: bmOnClickData, _tabId: number): Promise<void> {
-    openNewTab(_info.selectionText || "", "duckduckgo");
-}
-
-async function _searchExactlyGoogle(_info: bmOnClickData, _tabId: number): Promise<void> {
-    openNewTab(_info.selectionText || "", "google");
-}
-
 
 const copyToClipboard = async (text: string): Promise<boolean> => {
     try {
@@ -173,23 +153,6 @@ const extensionMenuItems: HostData[] = [
                 title: getTranslation("menuItemComposeSource"),
                 callback: _composeSource,
                 contexts: ["page"]
-            }
-        ]
-    },
-    {
-        host: "wiktionary",
-        actions: [
-            {
-                id: "search-exactly-Google",
-                title: getTranslation("menuItemSearchExactly", "Google"),
-                callback: _searchExactlyGoogle,
-                contexts: ["selection"]
-            },
-            {
-                id: "search-exactly-Ddg",
-                title: getTranslation("menuItemSearchExactly", "duckduckgo"),
-                callback: _searchExactlyDdg,
-                contexts: ["selection"]
             }
         ]
     },
